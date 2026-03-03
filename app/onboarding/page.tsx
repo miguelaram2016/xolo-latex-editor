@@ -126,14 +126,14 @@ export default function OnboardingPage() {
       try {
         const checkoutUrl = await createCheckoutSession({
           annual: isMonthly,
-          withTrial: true,
+          withTrial: false,
         });
         const conversionId = crypto.randomUUID();
-        window.rdt?.('track', 'StartTrial', { conversionId });
+        window.rdt?.('track', 'Purchase', { conversionId });
         navigator.sendBeacon(
           '/api/reddit-capi',
           new Blob(
-            [JSON.stringify({ eventName: 'StartTrial', conversionId, email: userEmail })],
+            [JSON.stringify({ eventName: 'Purchase', conversionId, email: userEmail })],
             { type: 'application/json' },
           ),
         );
@@ -336,22 +336,13 @@ export default function OnboardingPage() {
                       ? 'Loading...'
                       : 'Saving...'
                     : currentStep === TOTAL_STEPS - 1
-                      ? 'Start Free Trial →'
+                      ? 'Upgrade to Continue'
                       : 'Continue'}
                 </Button>
-                {currentStep === 1 && (
-                  <Button
-                    className="w-full"
-                    variant="ghost"
-                    onClick={handleSkipSubscription}
-                    disabled={isSubmitting}
-                  >
-                    Skip for now
-                  </Button>
-                )}
+                {/* Skip button removed — subscription is now required */}
                 {currentStep === 1 && (
                   <p className="text-center text-xs text-muted-foreground">
-                    No charge for 3 days. Cancel anytime.
+                    Cancel anytime.
                   </p>
                 )}
               </div>
