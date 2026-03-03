@@ -255,12 +255,33 @@ export default function OnboardingPage() {
         return (
           <>
             <div className="space-y-1.5">
-              <h2 className="text-2xl font-semibold leading-none tracking-tight">Subscribe to Octree Pro</h2>
+              <h2 className="text-2xl font-semibold leading-none tracking-tight">Write better papers, faster</h2>
               <p className="text-sm text-muted-foreground">
-                Everything you need for professional LaTeX documents.
+                Stop wrestling with LaTeX. Let AI handle the formatting.
               </p>
             </div>
-            <div className="space-y-4 pt-4">
+            <div className="relative rounded-lg border border-border bg-blue-50/50 p-4 space-y-4 mt-4">
+              {isMonthly && (
+                <div className="absolute -top-3 left-4">
+                  <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-medium text-primary-foreground">Popular</span>
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <div className="flex items-baseline gap-2">
+                  <p className="text-3xl font-bold">{isMonthly ? '$2.49' : '$4.99'}</p>
+                  <p className="text-sm text-muted-foreground">per week</p>
+                  {isMonthly && (
+                    <p className="text-sm text-muted-foreground line-through">$4.99</p>
+                  )}
+                </div>
+                {isMonthly ? (
+                  <p className="text-xs text-muted-foreground">Billed monthly at $9.99/month — save 50%</p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">Billed weekly at $4.99/week</p>
+                )}
+              </div>
+
               <div className="flex items-center gap-2">
                 <Switch
                   id="monthly-switch"
@@ -271,27 +292,18 @@ export default function OnboardingPage() {
                   htmlFor="monthly-switch"
                   className="cursor-pointer text-sm font-normal"
                 >
-                  Save 50% with monthly billing
+                  {isMonthly ? 'Monthly billing enabled' : 'Switch to monthly and save 50%'}
                 </Label>
               </div>
 
-              <div className="space-y-1">
-                <div className="flex items-baseline gap-2">
-                  <p className="text-3xl font-bold">{isMonthly ? '$2.49' : '$4.99'}</p>
-                  <p className="text-sm text-muted-foreground">per week</p>
-                </div>
-                {isMonthly && (
-                  <p className="text-xs text-muted-foreground">Billed monthly at $9.99/month</p>
-                )}
-                {!isMonthly && (
-                  <p className="text-xs text-muted-foreground">Billed weekly at $4.99/week</p>
-                )}
-              </div>
-
               <div>
-                <p className="mb-4 text-sm font-semibold">Octree includes</p>
+                <p className="mb-4 text-sm font-semibold">What you get with Pro</p>
                 <FeatureList />
               </div>
+
+              <p className="text-xs text-muted-foreground">
+                Trusted by researchers at Harvard, NYU, Johns Hopkins, and more.
+              </p>
             </div>
           </>
         );
@@ -336,13 +348,13 @@ export default function OnboardingPage() {
                       ? 'Loading...'
                       : 'Saving...'
                     : currentStep === TOTAL_STEPS - 1
-                      ? 'Upgrade to Continue'
+                      ? 'Get Octree Pro →'
                       : 'Continue'}
                 </Button>
                 {/* Skip button removed — subscription is now required */}
                 {currentStep === 1 && (
                   <p className="text-center text-xs text-muted-foreground">
-                    Cancel anytime.
+                    Cancel anytime. No questions asked.
                   </p>
                 )}
               </div>

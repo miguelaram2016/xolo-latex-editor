@@ -56,13 +56,28 @@ export function PaywallDialog({ userEmail }: PaywallDialogProps) {
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle>Subscribe to Octree</DialogTitle>
+          <DialogTitle>Write better papers, faster</DialogTitle>
           <DialogDescription>
-            Upgrade to continue using Octree's features.
+            Stop wrestling with LaTeX. Let AI handle the formatting.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
+          <div className="space-y-1">
+            <div className="flex items-baseline gap-2">
+              <p className="text-3xl font-bold">{isMonthly ? '$2.49' : '$4.99'}</p>
+              <p className="text-sm text-muted-foreground">per week</p>
+              {isMonthly && (
+                <p className="text-sm text-muted-foreground line-through">$4.99</p>
+              )}
+            </div>
+            {isMonthly ? (
+              <p className="text-xs text-muted-foreground">Billed monthly at $9.99/month — save 50%</p>
+            ) : (
+              <p className="text-xs text-muted-foreground">Billed weekly at $4.99/week</p>
+            )}
+          </div>
+
           <div className="flex items-center gap-2">
             <Switch
               id="monthly-switch"
@@ -73,25 +88,12 @@ export function PaywallDialog({ userEmail }: PaywallDialogProps) {
               htmlFor="monthly-switch"
               className="cursor-pointer text-sm font-normal"
             >
-              Save 50% with monthly billing
+              {isMonthly ? 'Monthly billing enabled' : 'Switch to monthly and save 50%'}
             </Label>
           </div>
 
-          <div className="space-y-1">
-            <div className="flex items-baseline gap-2">
-              <p className="text-3xl font-bold">{isMonthly ? '$2.49' : '$4.99'}</p>
-              <p className="text-sm text-muted-foreground">per week</p>
-            </div>
-            {isMonthly && (
-              <p className="text-xs text-muted-foreground">Billed monthly at $9.99/month</p>
-            )}
-            {!isMonthly && (
-              <p className="text-xs text-muted-foreground">Billed weekly</p>
-            )}
-          </div>
-
           <div>
-            <p className="mb-4 text-sm font-semibold">Octree Pro includes</p>
+            <p className="mb-4 text-sm font-semibold">What you get with Pro</p>
             <FeatureList />
           </div>
 
@@ -101,8 +103,12 @@ export function PaywallDialog({ userEmail }: PaywallDialogProps) {
             onClick={handleSubscribe}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Loading...' : 'Subscribe Now'}
+            {isSubmitting ? 'Loading...' : 'Get Octree Pro →'}
           </Button>
+
+          <p className="text-center text-xs text-muted-foreground">
+            Cancel anytime. No questions asked.
+          </p>
 
           {userEmail && (
             <div className="flex items-center justify-between text-xs text-muted-foreground">
