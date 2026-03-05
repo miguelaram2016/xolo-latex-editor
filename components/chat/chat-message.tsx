@@ -56,16 +56,38 @@ function splitContentIntoSegments(
 
   const segments: ContentSegmentData[] = [];
   let lastIndex = 0;
+  let lastBoundaryIndex = -1;
+  let hasEditBoundaryAtCurrentIndex = false;
 
   for (const boundary of boundaries) {
+    const boundaryIndex = Math.max(0, Math.min(boundary.textIndex, text.length));
+
     // Text before this boundary
-    const segmentText = text.slice(lastIndex, boundary.textIndex);
-    if (segmentText.trim()) {
+    const segmentText = text.slice(lastIndex, boundaryIndex);
+    const hasVisibleText = segmentText.trim().length > 0;
+    if (hasVisibleText) {
       segments.push({ type: 'text', text: segmentText });
     }
-    // Record the boundary itself
-    segments.push({ type: 'tool-boundary', text: '', toolName: boundary.toolName });
-    lastIndex = boundary.textIndex;
+
+    if (boundaryIndex !== lastBoundaryIndex) {
+      lastBoundaryIndex = boundaryIndex;
+      hasEditBoundaryAtCurrentIndex = false;
+    }
+
+    const isDuplicateEditBoundary =
+      boundary.toolName === 'edit' &&
+      !hasVisibleText &&
+      hasEditBoundaryAtCurrentIndex;
+
+    // Collapse repeated edit boundaries that occur at the same text offset.
+    if (!isDuplicateEditBoundary) {
+      segments.push({ type: 'tool-boundary', text: '', toolName: boundary.toolName });
+    }
+    if (boundary.toolName === 'edit') {
+      hasEditBoundaryAtCurrentIndex = true;
+    }
+
+    lastIndex = boundaryIndex;
   }
 
   // Text after last boundary
