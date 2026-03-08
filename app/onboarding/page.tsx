@@ -107,6 +107,8 @@ export default function OnboardingPage() {
 
         await upsertUserUsage(user.id, {
           referral_source: referralSource,
+          role,
+          use_case: useCase,
           onboarding_completed: false,
         });
 
