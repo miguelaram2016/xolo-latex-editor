@@ -15,7 +15,6 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import GoogleLogo from '@/components/icons/google-logo';
 
 interface LoginFormProps extends React.ComponentPropsWithoutRef<'div'> {
   nextPath?: string;
@@ -54,31 +53,6 @@ export function LoginForm({
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSocialLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const supabase = createClient();
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/oauth?next=${encodeURIComponent(nextPath)}`,
-        },
-      });
-
-      if (error) throw error;
-      // Some environments/browsers may not auto-redirect. If a URL is returned, navigate explicitly.
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An error occurred');
       setIsLoading(false);
     }
   };
@@ -135,19 +109,6 @@ export function LoginForm({
             </div>
           </form>
 
-          <form onSubmit={handleSocialLogin}>
-            <div className="mt-2">
-              <Button
-                type="submit"
-                variant="outline-gradient"
-                className="w-full"
-                disabled={isLoading}
-              >
-                <GoogleLogo />
-                Continue with Google
-              </Button>
-            </div>
-          </form>
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <div className="text-center text-sm">
