@@ -4,7 +4,7 @@ import { createSSEHeaders } from '@/lib/octra-agent/stream-handling';
 import type { ConversationSummary } from '@/types/conversation';
 
 export const runtime = 'nodejs';
-export const maxDuration = 600;
+export const maxDuration = 300;
 
 const DOCUMENT_GENERATION_PROMPT = `You are an expert LaTeX document writer. Generate a complete, compilable LaTeX document based on the user's request.
 

@@ -22,7 +22,7 @@ const satoshi = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Octree',
+  title: 'Xolo LaTeX Editor',
   description: 'A latex editor that uses AI to help you write latex',
 };
 

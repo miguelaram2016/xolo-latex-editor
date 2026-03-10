@@ -19,7 +19,35 @@ export const config = {
   },
 };
 
-const COMPILE_SERVICE_URL = process.env.COMPILE_SERVICE_URL;
+const DEFAULT_COMPILE_SERVICE_URL = process.env.COMPILE_SERVICE_URL;
+
+/**
+ * Get compile service URL for user - check user settings first, then fall back to default
+ */
+async function getCompileServiceUrl(supabase: any): Promise<string | null> {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    
+    if (!session?.user) {
+      return DEFAULT_COMPILE_SERVICE_URL || null;
+    }
+
+    // Get user's custom compile service URL
+    const { data: settings } = await supabase
+      .from('user_settings')
+      .select('compile_service_url')
+      .eq('user_id', session.user.id)
+      .single();
+
+    // Return user's custom URL if set, otherwise default
+    return settings?.compile_service_url || DEFAULT_COMPILE_SERVICE_URL || null;
+  } catch (error) {
+    console.error('Error getting compile service URL:', error);
+    return DEFAULT_COMPILE_SERVICE_URL || null;
+  }
+}
 
 function normalizeRequest(body: Partial<CompileRequest>): CompileRequest {
   if (body.files && body.files.length > 0) {
@@ -102,9 +130,22 @@ export async function POST(request: Request) {
       filesCount: body.files.length,
     });
 
+    // Get user's compile service URL (custom or default)
+    const compileServiceUrl = await getCompileServiceUrl(supabase);
+    
+    if (!compileServiceUrl) {
+      return NextResponse.json(
+        { 
+          error: 'No compile service configured',
+          suggestion: 'Add your compile service URL in Settings > API Keys, or run the local compile service.'
+        },
+        { status: 503 }
+      );
+    }
+
     const compileResult = await compileLatex(
       body,
-      COMPILE_SERVICE_URL as string,
+      compileServiceUrl,
       session.access_token
     );
 
